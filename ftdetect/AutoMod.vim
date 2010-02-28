@@ -1,1 +1,1 @@
-au BufNewFile,BufRead *.m setf AutoMod
+au BufNewFile,BufRead *.m set ft=AutoMod

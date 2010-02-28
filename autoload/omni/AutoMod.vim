@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  So 28 Feb 2010 16:40:55 CET
+" Last Change:  So 28 Feb 2010 23:07:42 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -20,34 +20,13 @@ if !exists('s:cache')
 endif
 
 function! omni#AutoMod#Cache()
-    " get start directory
-    let depth = ':p:h'
-    let base = expand('%'.depth)
-    while match(base, '\.\%(arc\)\|\%(dir\)$') != -1
-        let depth .= ':h'
-        let base = expand('%'.depth)
-    endwhile
 
-    " get asy file locations
-    let models = split(globpath(base, "**/model.amo"), "\n")
-    let mainmodel = ''
-    let len = 0
-    let asys = []
+    let asys = s:GetModel()
 
-    for model in models
-        let model = substitute(model, '.*\zsmodel.amo$', '', '')
-
-        " determine shortest model name -> main model
-        if len == 0 || len(model) < len
-            let mainmodel = model
-            let len = len(model)
-        endif
-
-        let asys += split(glob(model . "*.asy"), "\n")
-    endfor
-
-    " determine main model name
-    let s:main = matchstr(mainmodel, '[^/]\+\ze.arc\/\=$')
+    if asys == []
+        let s:no_complete = 1
+        return
+    endif
 
     " read files
     for fp in asys
@@ -80,23 +59,125 @@ endfunction
 function! omni#AutoMod#Main(findstart, base)
 
     if a:findstart
+        let s:scope = omni#AutoMod#GetScope()
         return s:FindStartPosition()
+    endif
+
+    if s:scope != ''
+        return omni#AutoMod#Complete(a:base, s:scope)
     endif
 
     return omni#AutoMod#Complete(a:base)
 
 endfunction
 
-function! omni#AutoMod#Complete(base)
+function! omni#AutoMod#GetScope()
+    let line = getline('.')
+    let start = col('.') - 1
+    let pos = start
+
+    while pos > 0
+        if line[pos - 1] =~ '\S'
+            let pos -= 1
+        else
+            break
+        endif
+    endwhile
+
+    let scope = strpart(line, pos, start-pos)
+
+    if match(scope, '[\.:]') != -1
+        let scope = matchstr(scope, '\w\+\ze[\.:]')
+    else
+        return ''
+    endif
+
+    return scope
+endfunction
+
+function! omni#AutoMod#Complete(base, ...)
+
+    if exists('s:no_complete') && s:no_complete
+        return []
+    endif
 
     if !has_key(s:cache, s:main)
         call omni#AutoMod#Cache()
     endif
 
-    let lines = map(copy(s:cache[s:main].entities), 'v:val.word')
+    let system = s:main
+
+    if a:0 && a:1 != ''
+        if has_key(s:cache, a:1)
+            let system = a:1
+        endif
+    endif
+
+    let lines = map(copy(s:cache[system].entities), 'v:val.word')
     let lines = filter(lines, 'v:val =~ "^'.a:base.'"')
 
     return lines
+
+endfunction
+
+function! s:GetModel()
+
+    " get start directory
+    let max = 4
+    let depth = ':p:h'
+    let base = expand('%'.depth)
+    while match(base, '\.\%(arc\)\|\%(dir\)$') != -1
+        let max -= 1
+        let depth .= ':h'
+        let base = expand('%'.depth)
+        if !max || base == expand('$HOME') | break | endif
+    endwhile
+
+    " get asy file locations
+    let models = []
+    if base != expand('$HOME')
+        let models = split(globpath(base, "**/model.amo"), "\n")
+    endif
+
+    if models == []
+        call s:Warn('No model.amo found')
+        return []
+    endif
+
+    " limit systems to 10 by default
+    if exists('g:AutoMod_max_omni_systems')
+        if g:AutoMod_max_omni_systems > 0
+            if len(models) > g:AutoMod_max_omni_systems
+                call s:Warn('More than '.g:AutoMod_max_omni_systems.
+                            \ ' (sub)systems found')
+                return []
+            endif
+        endif
+    elseif len(models) > 10
+        call s:Warn('More than 10 (sub)systems found.')
+        return []
+    endif
+
+    let mainmodel = ''
+    let len = 0
+    let asys = []
+
+    for model in models
+        let model = substitute(model, '.*\zsmodel.amo$', '', '')
+
+        " determine shortest model name -> main model
+        if len == 0 || len(model) < len
+            let mainmodel = model
+            let len = len(model)
+        endif
+
+        let asys += split(glob(model . "*.asy"), "\n")
+    endfor
+
+    " determine main model name
+    let s:main = matchstr(mainmodel, '[^/]\+\ze.arc\/\=$')
+
+    return asys
 
 endfunction
 
@@ -141,4 +222,10 @@ function! s:FilterEntity(lines, prefix)
         call add(retlist, item)
     endfor
     return retlist
+endfunction
+
+function! s:Warn(msg)
+    echohl WarningMsg
+    echom 'omni#AutoMod.vim: ' . a:msg
+    echohl None
 endfunction
