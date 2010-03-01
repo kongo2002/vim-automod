@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  So 28 Feb 2010 23:07:42 CET
+" Last Change:  Mo 01 Mär 2010 00:47:29 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -11,13 +11,34 @@ endif
 
 function! omni#AutoMod#Init()
     set omnifunc=omni#AutoMod#Main
+    call omni#AutoMod#Settings()
     call omni#AutoMod#Cache()
 endfunction
 
-if !exists('s:cache')
-    "unlet s:cache
-    let s:cache = {}
-endif
+function! omni#AutoMod#Settings()
+
+    if !exists('s:cache')
+        let s:cache = {}
+    endif
+
+    if !exists('g:AutoMod_max_omni_systems')
+        let g:AutoMod_max_omni_systems = 10
+    endif
+
+    if !exists('s:entity_types')
+        let s:entity_types = {}
+        let s:entity_types['PROC'] = 'Procedure'
+        let s:entity_types['LDTYPE'] = 'LoadType'
+        let s:entity_types['QUEUE'] = 'Queue'
+        let s:entity_types['ORDER'] = 'Orderlist'
+        let s:entity_types['ATT'] = 'Attribute'
+        let s:entity_types['VAR'] = 'Variable'
+        let s:entity_types['SUBRTN'] = 'Subroutine'
+        let s:entity_types['RSRC'] = 'Resource'
+        let s:entity_types['CONVSTATION'] = 'Station'
+    endif
+
+endfunction
 
 function! omni#AutoMod#Cache()
 
@@ -39,8 +60,7 @@ function! omni#AutoMod#Cache()
             continue
         endif
 
-        for type in ['PROC', 'LDTYPE', 'QUEUE', 'ORDER', 'ATT', 'VAR',
-                    \ 'SUBRTN', 'RSRC']
+        for type in keys(s:entity_types)
             let entities = extend(entities, s:FilterEntity(lines, type))
         endfor
 
@@ -110,6 +130,8 @@ function! omni#AutoMod#Complete(base, ...)
     if a:0 && a:1 != ''
         if has_key(s:cache, a:1)
             let system = a:1
+        else
+            return []
         endif
     endif
 
@@ -145,17 +167,12 @@ function! s:GetModel()
     endif
 
     " limit systems to 10 by default
-    if exists('g:AutoMod_max_omni_systems')
-        if g:AutoMod_max_omni_systems > 0
-            if len(models) > g:AutoMod_max_omni_systems
-                call s:Warn('More than '.g:AutoMod_max_omni_systems.
-                            \ ' (sub)systems found')
-                return []
-            endif
+    if g:AutoMod_max_omni_systems > 0
+        if len(models) > g:AutoMod_max_omni_systems
+            call s:Warn('More than '.g:AutoMod_max_omni_systems.
+                        \ ' (sub)systems found')
+            return []
         endif
-    elseif len(models) > 10
-        call s:Warn('More than 10 (sub)systems found.')
-        return []
     endif
 
     let mainmodel = ''
@@ -219,6 +236,7 @@ function! s:FilterEntity(lines, prefix)
         let item = {}
         let item.word = matchstr(line, '^'.a:prefix.' name \zs\S\+\ze')
         let item.kind = kind
+        let item.menu = s:entity_types[a:prefix]
         call add(retlist, item)
     endfor
     return retlist
