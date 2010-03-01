@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mo 01 Mär 2010 22:49:49 CET
+" Last Change:  Mo 01 Mär 2010 23:22:37 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -75,7 +75,6 @@ function! omni#AutoMod#Cache()
         endif
 
         if exists('g:AutoMod_omni_debug') && g:AutoMod_omni_debug
-            echom '*** Mainmodel: ' . s:main . ' ***'
             for key in keys(s:cache)
                 echom '*** ' . s:cache[key].name . ' ***'
                 echom '*** ' . s:cache[key].mod . ' ***'
@@ -136,6 +135,10 @@ function! omni#AutoMod#Complete(base, ...)
     if !exists('s:main')
         let mainmodel = expand('%:p:h')
         let s:main = matchstr(mainmodel, '[^/\\]\+\ze\.\w\{3}[/\\]\=$')
+
+        if exists('g:AutoMod_omni_debug') && g:AutoMod_omni_debug
+            echom '*** Mainmodel: ' . s:main . ' ***'
+        endif
     endif
 
     let system = s:main
