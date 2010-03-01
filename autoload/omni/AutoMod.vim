@@ -203,7 +203,7 @@ function! s:GetModel()
     endfor
 
     " determine main model name
-    let s:main = matchstr(mainmodel, '[^/]\+\ze.arc\/\=$')
+    let s:main = matchstr(mainmodel, '[^/\\]\+\ze.arc[/\\]\=$')
 
     return asys
 
