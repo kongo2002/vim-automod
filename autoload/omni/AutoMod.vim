@@ -36,6 +36,7 @@ function! omni#AutoMod#Settings()
         let s:entity_types['SUBRTN'] = 'Subroutine'
         let s:entity_types['RSRC'] = 'Resource'
         let s:entity_types['CONVSTATION'] = 'Station'
+        let s:entity_types['FUNC'] = 'Function'
     endif
 
 endfunction
