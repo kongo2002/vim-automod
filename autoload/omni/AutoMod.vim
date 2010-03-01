@@ -72,6 +72,17 @@ function! omni#AutoMod#Cache()
             let system.entities = entities
             let s:cache[name] = system
         endif
+
+        if exists('g:AutoMod_omni_debug') && g:AutoMod_omni_debug
+            echom '*** Mainmodel: ' . s:main . ' ***'
+            for key in keys(s:cache)
+                echom '*** ' . s:cache[key].name . ' ***'
+                echom '*** ' . s:cache[key].mod . ' ***'
+                for entity in s:cache[key].entities
+                    echom entity.word
+                endfor
+            endfor
+        endif
     endfor
 
 endfunction
