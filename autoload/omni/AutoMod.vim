@@ -21,8 +21,8 @@ function! omni#AutoMod#Settings()
         let s:cache = {}
     endif
 
-    if !exists('g:AutoMod_max_omni_systems')
-        let g:AutoMod_max_omni_systems = 10
+    if !exists('g:AutoMod_omni_max_systems')
+        let g:AutoMod_omni_max_systems = 10
     endif
 
     if !exists('s:entity_types')
@@ -178,9 +178,9 @@ function! s:GetModel()
     endif
 
     " limit systems to 10 by default
-    if g:AutoMod_max_omni_systems > 0
-        if len(models) > g:AutoMod_max_omni_systems
-            call s:Warn('More than '.g:AutoMod_max_omni_systems.
+    if g:AutoMod_omni_max_systems > 0
+        if len(models) > g:AutoMod_omni_max_systems
+            call s:Warn('More than '.g:AutoMod_omni_max_systems.
                         \ ' (sub)systems found')
             return []
         endif
