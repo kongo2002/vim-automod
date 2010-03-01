@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mo 01 Mär 2010 00:47:29 CET
+" Last Change:  Mo 01 Mär 2010 22:49:49 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -132,22 +132,23 @@ function! omni#AutoMod#Complete(base, ...)
         return []
     endif
 
-    if !has_key(s:cache, s:main)
-        call omni#AutoMod#Cache()
+    if !exists('s:main')
+        let mainmodel = expand('%:p:h')
+        let s:main = matchstr(mainmodel, '[^/\\]\+\ze\.\w\{3}[/\\]\=$')
     endif
 
     let system = s:main
 
     if a:0 && a:1 != ''
-        if has_key(s:cache, a:1)
-            let system = a:1
-        else
-            return []
-        endif
+        let system = a:1
     endif
 
-    let lines = map(copy(s:cache[system].entities), 'v:val.word')
-    let lines = filter(lines, 'v:val =~ "^'.a:base.'"')
+    let lines = []
+
+    if has_key(s:cache, system)
+        let lines = map(copy(s:cache[system].entities), 'v:val.word')
+        let lines = filter(lines, 'v:val =~ "^'.a:base.'"')
+    endif
 
     return lines
 
@@ -186,24 +187,12 @@ function! s:GetModel()
         endif
     endif
 
-    let mainmodel = ''
-    let len = 0
     let asys = []
 
     for model in models
         let model = substitute(model, '.*\zsmodel.amo$', '', '')
-
-        " determine shortest model name -> main model
-        if len == 0 || len(model) < len
-            let mainmodel = model
-            let len = len(model)
-        endif
-
         let asys += split(glob(model . "*.asy"), "\n")
     endfor
-
-    " determine main model name
-    let s:main = matchstr(mainmodel, '[^/\\]\+\ze.arc[/\\]\=$')
 
     return asys
 
