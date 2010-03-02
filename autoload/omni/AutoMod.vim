@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 02 Mär 2010 22:44:57 CET
+" Last Change:  Di 02 Mär 2010 22:48:17 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -13,8 +13,8 @@ function! omni#AutoMod#Init()
     set omnifunc=omni#AutoMod#Main
     call omni#AutoMod#Settings()
     call omni#AutoMod#Cache()
-    inoremap <expr> . omni#AutoMod#DoComplete('.')
-    inoremap <expr> : omni#AutoMod#DoComplete(':')
+    inoremap <buffer> <expr> . omni#AutoMod#DoComplete('.')
+    inoremap <buffer> <expr> : omni#AutoMod#DoComplete(':')
 endfunction
 
 function! omni#AutoMod#Settings()
