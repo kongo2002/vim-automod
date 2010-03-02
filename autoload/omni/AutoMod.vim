@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mo 01 Mär 2010 23:22:37 CET
+" Last Change:  Di 02 Mär 2010 02:56:31 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -91,14 +91,15 @@ function! omni#AutoMod#Main(findstart, base)
 
     if a:findstart
         let s:scope = omni#AutoMod#GetScope()
+        let s:type = omni#AutoMod#GetType()
         return s:FindStartPosition()
     endif
 
     if s:scope != ''
-        return omni#AutoMod#Complete(a:base, s:scope)
+        return omni#AutoMod#Complete(a:base, s:type, s:scope)
     endif
 
-    return omni#AutoMod#Complete(a:base)
+    return omni#AutoMod#Complete(a:base, s:type)
 
 endfunction
 
@@ -126,7 +127,37 @@ function! omni#AutoMod#GetScope()
     return scope
 endfunction
 
-function! omni#AutoMod#Complete(base, ...)
+function! omni#AutoMod#GetType()
+    let line = strpart(getline('.'), 0, col('.') - 2)
+
+    if match(line, '\S\+\s\+\S*$')
+        let type = matchstr(line, '\S\+\ze\s\+\S*$')
+
+        " a = attribute
+        " c = conveyor station
+        " f = function
+        " l = load type
+        " o = orderlist
+        " p = procedure
+        " q = queue
+        " r = resource
+        " s = subroutine
+        " v = variable
+
+        if type =~ 'set'
+            return 'av'
+        elseif type =~ 'to'
+            return 'acflopqrv'
+        elseif type =~ 'call'
+            return 'afsv'
+        elseif type =~ 'if'
+            return 'afopqrv'
+    endif
+
+    return ''
+endfunction
+
+function! omni#AutoMod#Complete(base, type, ...)
 
     if exists('s:no_complete') && s:no_complete
         return []
@@ -150,8 +181,22 @@ function! omni#AutoMod#Complete(base, ...)
     let lines = []
 
     if has_key(s:cache, system)
-        let lines = map(copy(s:cache[system].entities), 'v:val.word')
-        let lines = filter(lines, 'v:val =~ "^'.a:base.'"')
+        let words = []
+        if a:type != ''
+            let i = 0
+            while i < strlen(a:type)
+                for entity in s:cache[system].entities
+                    if entity.kind == strpart(a:type, i, 1)
+                        call add(words, entity.word)
+                    endif
+                endfor
+                let i += 1
+            endwhile
+        else
+            let words = map(copy(s:cache[system].entities), 'v:val.word')
+        endif
+
+        let lines = filter(words, 'v:val =~ "^'.a:base.'"')
     endif
 
     return lines
