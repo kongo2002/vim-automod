@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 02 Mär 2010 02:56:31 CET
+" Last Change:  Di 02 Mär 2010 21:36:39 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -36,6 +36,7 @@ function! omni#AutoMod#Settings()
         let s:entity_types['SUBRTN'] = 'Subroutine'
         let s:entity_types['RSRC'] = 'Resource'
         let s:entity_types['CONVSTATION'] = 'Station'
+        let s:entity_types['CPOINT'] = 'Station'
         let s:entity_types['FUNC'] = 'Function'
     endif
 
@@ -134,7 +135,7 @@ function! omni#AutoMod#GetType()
         let type = matchstr(line, '\S\+\ze\s\+\S*$')
 
         " a = attribute
-        " c = conveyor station
+        " c = conveyor/pm station
         " f = function
         " l = load type
         " o = orderlist
@@ -151,6 +152,8 @@ function! omni#AutoMod#GetType()
         elseif type =~ 'call'
             return 'afsv'
         elseif type =~ 'if'
+            return 'afopqrv'
+        elseif type =~ 'while'
             return 'afopqrv'
     endif
 
