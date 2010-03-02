@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 02 Mär 2010 22:03:47 CET
+" Last Change:  Di 02 Mär 2010 22:44:57 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -13,6 +13,8 @@ function! omni#AutoMod#Init()
     set omnifunc=omni#AutoMod#Main
     call omni#AutoMod#Settings()
     call omni#AutoMod#Cache()
+    inoremap <expr> . omni#AutoMod#DoComplete('.')
+    inoremap <expr> : omni#AutoMod#DoComplete(':')
 endfunction
 
 function! omni#AutoMod#Settings()
@@ -105,20 +107,20 @@ function! omni#AutoMod#Main(findstart, base)
 
 endfunction
 
+function! omni#AutoMod#DoComplete(key)
+    let word = s:GetPreceding()
+
+    if word != '' && word !~ '^\d\+$'
+        set completeopt-=menu
+        set completeopt+=menuone
+        return a:key . "\<C-X>\<C-O>\<C-P>"
+    endif
+
+    return a:key
+endfunction
+
 function! omni#AutoMod#GetScope()
-    let line = getline('.')
-    let start = col('.') - 1
-    let pos = start
-
-    while pos > 0
-        if line[pos - 1] =~ '\S'
-            let pos -= 1
-        else
-            break
-        endif
-    endwhile
-
-    let scope = strpart(line, pos, start-pos)
+    let scope = s:GetPreceding()
 
     if match(scope, '[\.:]') != -1
         let scope = matchstr(scope, '\w\+\ze[\.:]')
@@ -290,6 +292,26 @@ function! s:FindStartPosition()
     endif
 
     return lastword
+endfunction
+
+function! s:GetPreceding()
+    let line = getline('.')
+    let start = col('.') - 1
+    let pos = start
+    let scope = ''
+
+    while pos > 0
+        if line[pos - 1] =~ '\S'
+            let pos -= 1
+        else
+            break
+        endif
+    endwhile
+
+    let scope = strpart(line, pos, start-pos)
+
+    return scope
+
 endfunction
 
 function! s:FilterEntity(lines, prefix)
