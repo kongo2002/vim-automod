@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 02 Mär 2010 21:36:39 CET
+" Last Change:  Di 02 Mär 2010 21:57:02 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -35,9 +35,10 @@ function! omni#AutoMod#Settings()
         let s:entity_types['VAR'] = 'Variable'
         let s:entity_types['SUBRTN'] = 'Subroutine'
         let s:entity_types['RSRC'] = 'Resource'
-        let s:entity_types['CONVSTATION'] = 'Station'
-        let s:entity_types['CPOINT'] = 'Station'
+        let s:entity_types['CONVSTATION'] = 'Control Point'
+        let s:entity_types['CPOINT'] = 'Control Point'
         let s:entity_types['FUNC'] = 'Function'
+        let s:entity_types['PDSTAND'] = 'Control Point'
     endif
 
 endfunction
@@ -129,7 +130,7 @@ function! omni#AutoMod#GetScope()
 endfunction
 
 function! omni#AutoMod#GetType()
-    let line = strpart(getline('.'), 0, col('.') - 2)
+    let line = strpart(getline('.'), 0, col('.') - 1)
 
     if match(line, '\S\+\s\+\S*$')
         let type = matchstr(line, '\S\+\ze\s\+\S*$')
@@ -282,7 +283,7 @@ endfunction
 
 function! s:FilterEntity(lines, prefix)
     let retlist = []
-    let kind = tolower(matchstr(a:prefix, '^\w'))
+    let kind = tolower(matchstr(s:entity_types[a:prefix], '^\w'))
     let lines = filter(copy(a:lines), 'v:val =~ "^'.a:prefix.' name"')
     for line in lines
         let item = {}
