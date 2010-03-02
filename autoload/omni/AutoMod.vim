@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 02 Mär 2010 21:57:02 CET
+" Last Change:  Di 02 Mär 2010 22:03:47 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -186,6 +186,17 @@ function! omni#AutoMod#Complete(base, type, ...)
 
     if has_key(s:cache, system)
         let words = []
+
+        " add submodels if working in the main model
+        if system == s:main
+            for sys in keys(s:cache)
+                if sys != s:main
+                    call add(words, sys)
+                endif
+            endfor
+        endif
+
+        " filter types if given
         if a:type != ''
             let i = 0
             while i < strlen(a:type)
