@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 02 Mär 2010 22:48:17 CET
+" Last Change:  Mi 03 Mär 2010 14:08:44 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -260,7 +260,17 @@ function! s:GetModel()
         let asys += split(glob(model . "*.asy"), "\n")
     endfor
 
-    return asys
+    let models = []
+
+    " filter static systems
+    for fp in asys
+        let lines = readfile(fp, '', 1)
+        if lines[0] !~? '^SYSTYPE Static'
+            call add(models, fp)
+        endif
+    endfor
+
+    return models
 
 endfunction
 
