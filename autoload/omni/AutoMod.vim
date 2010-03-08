@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mi 03 Mär 2010 14:08:44 CET
+" Last Change:  Mo 08 Mär 2010 18:37:29 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -193,7 +193,7 @@ function! omni#AutoMod#Complete(base, type, ...)
         if system == s:main
             for sys in keys(s:cache)
                 if sys != s:main
-                    call add(words, sys)
+                    call add(words, { "word": sys, "menu": "System" })
                 endif
             endfor
         endif
@@ -203,17 +203,19 @@ function! omni#AutoMod#Complete(base, type, ...)
             let i = 0
             while i < strlen(a:type)
                 for entity in s:cache[system].entities
-                    if entity.kind == strpart(a:type, i, 1)
-                        call add(words, entity.word)
+                    if has_key(entity, 'kind')
+                        if entity.kind == strpart(a:type, i, 1)
+                            call add(words, entity)
+                        endif
                     endif
                 endfor
                 let i += 1
             endwhile
         else
-            let words = map(copy(s:cache[system].entities), 'v:val.word')
+            let words = copy(s:cache[system].entities)
         endif
 
-        let lines = filter(words, 'v:val =~ "^'.a:base.'"')
+        let lines = filter(words, 'v:val.word =~ "^'.a:base.'"')
     endif
 
     return lines
@@ -330,9 +332,9 @@ function! s:FilterEntity(lines, prefix)
     let lines = filter(copy(a:lines), 'v:val =~ "^'.a:prefix.' name"')
     for line in lines
         let item = {}
-        let item.word = matchstr(line, '^'.a:prefix.' name \zs\S\+\ze')
-        let item.kind = kind
-        let item.menu = s:entity_types[a:prefix]
+        let item['word'] = matchstr(line, '^'.a:prefix.' name \zs\S\+\ze')
+        let item['kind'] = kind
+        let item['menu'] = s:entity_types[a:prefix]
         call add(retlist, item)
     endfor
     return retlist
