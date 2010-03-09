@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mo 08 Mär 2010 18:37:29 CET
+" Last Change:  Di 09 Mär 2010 18:18:32 CET
 
 if v:version < 700
     echohl WarningMsg
@@ -204,7 +204,7 @@ function! omni#AutoMod#Complete(base, type, ...)
             while i < strlen(a:type)
                 for entity in s:cache[system].entities
                     if has_key(entity, 'kind')
-                        if entity.kind == strpart(a:type, i, 1)
+                        if entity.kind == a:type[i]
                             call add(words, entity)
                         endif
                     endif
