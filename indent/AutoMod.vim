@@ -1,7 +1,7 @@
 " AutoMod indent file
 " Language:     AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Do 11 Mär 2010 18:05:45 CET
+" Last Change:  Do 11 Mär 2010 20:18:19 CET
 
 if exists("b:did_indent")
     finish
@@ -69,7 +69,10 @@ function GetAutoModIndent()
     endif
 
     " comments
-    if synIDattr(synID(v:lnum, indnt+1, 0), "name") = "mComment"
+    if synIDattr(synID(v:lnum, indnt+1, 0), "name") == "mComment"
+        if getline(v:lnum-1) =~ '^\s*\/\=\*' && cline =~ '^\s*\*'
+            return indnt + 1
+        endif
         return indnt
     endif
 

@@ -1,7 +1,7 @@
 " Vim filetype file
 " Filename:     AutoMod.vim
 " Author:       Gregor Uhlenheuer
-" Last Change:  So 28 Feb 2010 15:57:05 CET
+" Last Change:  Do 11 Mär 2010 20:07:28 CET
 
 " omni completion
 call omni#AutoMod#Init()
@@ -11,6 +11,10 @@ setlocal foldmethod=syntax
 
 " use literal tabs
 setlocal noexpandtab
+
+" correctly format comments
+setlocal formatoptions=croql
+setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/
 
 " do not show non printable characters
 setlocal nolist
