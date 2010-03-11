@@ -1,7 +1,7 @@
 " AutoMod indent file
 " Language:     AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mi 23 Dez 2009 19:10:03 CET
+" Last Change:  Do 11 Mär 2010 18:05:45 CET
 
 if exists("b:did_indent")
     finish
@@ -11,7 +11,7 @@ let b:did_indent = 1
 let b:indent_use_syntax = has("syntax")
 
 setlocal indentexpr=GetAutoModIndent()
-setlocal indentkeys+==end,=else,=until,=begin,=order,=choice
+setlocal indentkeys+==end,=else,=until,=begin,=order,=choice,=result,=delimiter
 
 if exists("*GetAutoModIndent")
     finish
@@ -99,6 +99,16 @@ function GetAutoModIndent()
         return indnt + &shiftwidth
     endif
 
+    " open/save result
+    if cline =~ '^\s*save\s\+result\>' && s:PrevNonCLine(1) =~ '^\s*open\>'
+        return indnt + &shiftwidth
+    endif
+
+    " read/with delimiter
+    if cline =~ '^\s*with\s\+delimiter\>' && s:PrevNonCLine(1) =~ '^\s*read\>'
+        return indnt + &shiftwidth
+    endif
+
     " backorder unindent
     if s:PrevNonCLine(1) =~ '^\s*in\s\+case\>'
         let indnt -= &sw
@@ -106,6 +116,16 @@ function GetAutoModIndent()
 
     " save choice unindent
     if s:PrevNonCLine(1) =~ '^\s*save\s\+choice\>'
+        let indnt -= &sw
+    endif
+
+    " save result unindent
+    if s:PrevNonCLine(1) =~ '^\s*save\s\+result\>'
+        let indnt -= &sw
+    endif
+
+    " with delimiter unindent
+    if s:PrevNonCLine(1) =~ '^\s*with\s\+delimiter\>'
         let indnt -= &sw
     endif
 
