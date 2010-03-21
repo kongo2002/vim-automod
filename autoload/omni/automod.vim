@@ -1,30 +1,30 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Di 09 Mär 2010 18:18:32 CET
+" Last Change:  Sun 21 Mar 2010 07:16:24 PM CET
 
 if v:version < 700
     echohl WarningMsg
-    echomsg "omni#AutoMod.vim: Please install vim 7.0 or higher"
+    echomsg "omni#automod.vim: Please install vim 7.0 or higher"
     echohl None
     finish
 endif
 
-function! omni#AutoMod#Init()
-    set omnifunc=omni#AutoMod#Main
-    call omni#AutoMod#Settings()
-    call omni#AutoMod#Cache()
-    inoremap <buffer> <expr> . omni#AutoMod#DoComplete('.')
-    inoremap <buffer> <expr> : omni#AutoMod#DoComplete(':')
+function! omni#automod#Init()
+    set omnifunc=omni#automod#Main
+    call omni#automod#Settings()
+    call omni#automod#Cache()
+    inoremap <buffer> <expr> . omni#automod#DoComplete('.')
+    inoremap <buffer> <expr> : omni#automod#DoComplete(':')
 endfunction
 
-function! omni#AutoMod#Settings()
+function! omni#automod#Settings()
 
     if !exists('s:cache')
         let s:cache = {}
     endif
 
-    if !exists('g:AutoMod_omni_max_systems')
-        let g:AutoMod_omni_max_systems = 10
+    if !exists('g:automod_omni_max_systems')
+        let g:automod_omni_max_systems = 10
     endif
 
     if !exists('s:entity_types')
@@ -45,7 +45,7 @@ function! omni#AutoMod#Settings()
 
 endfunction
 
-function! omni#AutoMod#Cache()
+function! omni#automod#Cache()
 
     let asys = s:GetModel()
 
@@ -78,7 +78,7 @@ function! omni#AutoMod#Cache()
             let s:cache[name] = system
         endif
 
-        if exists('g:AutoMod_omni_debug') && g:AutoMod_omni_debug
+        if exists('g:automod_omni_debug') && g:automod_omni_debug
             for key in keys(s:cache)
                 echom '*** ' . s:cache[key].name . ' ***'
                 echom '*** ' . s:cache[key].mod . ' ***'
@@ -91,23 +91,23 @@ function! omni#AutoMod#Cache()
 
 endfunction
 
-function! omni#AutoMod#Main(findstart, base)
+function! omni#automod#Main(findstart, base)
 
     if a:findstart
-        let s:scope = omni#AutoMod#GetScope()
-        let s:type = omni#AutoMod#GetType()
+        let s:scope = omni#automod#GetScope()
+        let s:type = omni#automod#GetType()
         return s:FindStartPosition()
     endif
 
     if s:scope != ''
-        return omni#AutoMod#Complete(a:base, s:type, s:scope)
+        return omni#automod#Complete(a:base, s:type, s:scope)
     endif
 
-    return omni#AutoMod#Complete(a:base, s:type)
+    return omni#automod#Complete(a:base, s:type)
 
 endfunction
 
-function! omni#AutoMod#DoComplete(key)
+function! omni#automod#DoComplete(key)
     let word = s:GetPreceding()
 
     if word != '' && word !~ '^\d\+$'
@@ -119,7 +119,7 @@ function! omni#AutoMod#DoComplete(key)
     return a:key
 endfunction
 
-function! omni#AutoMod#GetScope()
+function! omni#automod#GetScope()
     let scope = s:GetPreceding()
 
     if match(scope, '[\.:]') != -1
@@ -131,7 +131,7 @@ function! omni#AutoMod#GetScope()
     return scope
 endfunction
 
-function! omni#AutoMod#GetType()
+function! omni#automod#GetType()
     let line = strpart(getline('.'), 0, col('.') - 1)
 
     if match(line, '\S\+\s\+\S*$')
@@ -163,7 +163,7 @@ function! omni#AutoMod#GetType()
     return ''
 endfunction
 
-function! omni#AutoMod#Complete(base, type, ...)
+function! omni#automod#Complete(base, type, ...)
 
     if exists('s:no_complete') && s:no_complete
         return []
@@ -173,7 +173,7 @@ function! omni#AutoMod#Complete(base, type, ...)
         let mainmodel = expand('%:p:h')
         let s:main = matchstr(mainmodel, '[^/\\]\+\ze\.\w\{3}[/\\]\=$')
 
-        if exists('g:AutoMod_omni_debug') && g:AutoMod_omni_debug
+        if exists('g:automod_omni_debug') && g:automod_omni_debug
             echom '*** Mainmodel: ' . s:main . ' ***'
         endif
     endif
@@ -247,9 +247,9 @@ function! s:GetModel()
     endif
 
     " limit systems to 10 by default
-    if g:AutoMod_omni_max_systems > 0
-        if len(models) > g:AutoMod_omni_max_systems
-            call s:Warn('More than '.g:AutoMod_omni_max_systems.
+    if g:automod_omni_max_systems > 0
+        if len(models) > g:automod_omni_max_systems
+            call s:Warn('More than '.g:automod_omni_max_systems.
                         \ ' (sub)systems found')
             return []
         endif
@@ -342,6 +342,6 @@ endfunction
 
 function! s:Warn(msg)
     echohl WarningMsg
-    echom 'omni#AutoMod.vim: ' . a:msg
+    echom 'omni#automod.vim: ' . a:msg
     echohl None
 endfunction

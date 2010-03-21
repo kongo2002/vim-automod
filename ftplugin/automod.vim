@@ -1,10 +1,10 @@
 " Vim filetype file
 " Filename:     AutoMod.vim
 " Author:       Gregor Uhlenheuer
-" Last Change:  Do 11 Mär 2010 20:07:28 CET
+" Last Change:  Sun 21 Mar 2010 07:18:47 PM CET
 
 " omni completion
-call omni#AutoMod#Init()
+call omni#automod#Init()
 
 " enable syntax based folding
 setlocal foldmethod=syntax

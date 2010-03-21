@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:     AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Mi 03 Feb 2010 18:50:26 CET
+" Last Change:  Sun 21 Mar 2010 07:17:23 PM CET
 
 if version < 600
     syntax clear
@@ -128,4 +128,4 @@ if version >= 508 || !exists("did_automod_syn_inits")
 
 endif
 
-let b:current_syntax = "AutoMod"
+let b:current_syntax = "automod"
