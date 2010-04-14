@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Sun 21 Mar 2010 07:16:24 PM CET
+" Last Change:  Wed 14 Apr 2010 04:22:23 PM CEST
 
 if v:version < 700
     echohl WarningMsg
@@ -24,7 +24,7 @@ function! omni#automod#Settings()
     endif
 
     if !exists('g:automod_omni_max_systems')
-        let g:automod_omni_max_systems = 10
+        let g:automod_omni_max_systems = 20
     endif
 
     if !exists('s:entity_types')
