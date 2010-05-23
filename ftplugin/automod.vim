@@ -1,7 +1,7 @@
 " Vim filetype file
-" Filename:     AutoMod.vim
+" Filename:     automod.vim
 " Author:       Gregor Uhlenheuer
-" Last Change:  Sun 21 Mar 2010 07:18:47 PM CET
+" Last Change:  Sun 23 May 2010 08:38:06 PM CEST
 
 " omni completion
 call omni#automod#Init()
@@ -24,3 +24,6 @@ let b:match_words = '\<begin\>:\<end\>,'
                 \ . '\%(else\s\+\)\@<!if\>:'
                 \ . '\%(\<else\s\+\)\@<=if\>:'
                 \ . '\<else\%(\s\+if\)\@!'
+
+" make ftplugin undo-able
+let b:undo_ftplugin = 'setl fdm< et< fo< com< list< | unlet b:match_words'
