@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Wed 14 Apr 2010 04:22:23 PM CEST
+" Last Change:  Thu 27 May 2010 09:18:18 PM CEST
 
 if v:version < 700
     echohl WarningMsg
@@ -222,6 +222,45 @@ function! omni#automod#Complete(base, type, ...)
 
 endfunction
 
+function s:HasDuplicates(list)
+    let tmplist = []
+    for item in a:list
+        if index(tmplist, item) == -1
+            call add(tmplist, item)
+        else
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+
+function s:Uniquify(list)
+    let retlist = []
+    for item in a:list
+        if index(retlist, item) == -1
+            call add(retlist, item)
+        endif
+    endfor
+    return retlist
+endfunction
+
+function s:CheckMultipleVersions(dir)
+    " get all directories in the current dir
+    let dirs = split(globpath(a:dir, '*'), "\n")
+    call filter(dirs, 'isdirectory(v:val) != 0')
+
+    " strip '.dir' and '.arc' endings
+    call map(dirs, 'substitute(v:val, "\\.\\%(dir\\|arc\\)\\/\\=$", "", "")')
+
+    " remove duplicates
+    let dirs = s:Uniquify(dirs)
+
+    " strip numeric directory endings
+    call map(dirs, 'substitute(v:val, "\\d\\+$", "", "")')
+
+    return s:HasDuplicates(dirs)
+endfunction
+
 function! s:GetModel()
 
     " get start directory
@@ -233,7 +272,18 @@ function! s:GetModel()
         let depth .= ':h'
         let base = expand('%'.depth)
         if !max || base == expand('$HOME') | break | endif
+
+        " step one directory backwards if inside a 'multiple version'
+        " directory like 'model05, model06, model07 ...'
+        if s:CheckMultipleVersions(base)
+            let base = expand('%'.depth[:-2])
+            break
+        endif
     endwhile
+
+    if exists('g:automod_omni_debug') && g:automod_omni_debug
+        echom '*** Base directory: ' . base
+    endif
 
     " get asy file locations
     let models = []
@@ -246,7 +296,7 @@ function! s:GetModel()
         return []
     endif
 
-    " limit systems to 10 by default
+    " limit systems to be parsed
     if g:automod_omni_max_systems > 0
         if len(models) > g:automod_omni_max_systems
             call s:Warn('More than '.g:automod_omni_max_systems.
