@@ -1,7 +1,7 @@
 " Vim filetype file
 " Filename:     automod.vim
 " Author:       Gregor Uhlenheuer
-" Last Change:  Sun 23 May 2010 08:38:06 PM CEST
+" Last Change:  Thu 27 May 2010 11:22:59 PM CEST
 
 " omni completion
 call omni#automod#Init()
@@ -9,8 +9,10 @@ call omni#automod#Init()
 " enable syntax based folding
 setlocal foldmethod=syntax
 
-" use literal tabs
+" use hard tabs
 setlocal noexpandtab
+setlocal shiftwidth=4
+setlocal tabstop=4
 
 " correctly format comments
 setlocal formatoptions=croql
