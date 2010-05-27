@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Thu 27 May 2010 09:18:18 PM CEST
+" Last Change:  Thu 27 May 2010 09:37:57 PM CEST
 
 if v:version < 700
     echohl WarningMsg
@@ -222,7 +222,7 @@ function! omni#automod#Complete(base, type, ...)
 
 endfunction
 
-function s:HasDuplicates(list)
+function! s:HasDuplicates(list)
     let tmplist = []
     for item in a:list
         if index(tmplist, item) == -1
@@ -234,7 +234,7 @@ function s:HasDuplicates(list)
     return 0
 endfunction
 
-function s:Uniquify(list)
+function! s:Uniquify(list)
     let retlist = []
     for item in a:list
         if index(retlist, item) == -1
@@ -244,13 +244,13 @@ function s:Uniquify(list)
     return retlist
 endfunction
 
-function s:CheckMultipleVersions(dir)
+function! s:CheckMultipleVersions(dir)
     " get all directories in the current dir
     let dirs = split(globpath(a:dir, '*'), "\n")
     call filter(dirs, 'isdirectory(v:val) != 0')
 
     " strip '.dir' and '.arc' endings
-    call map(dirs, 'substitute(v:val, "\\.\\%(dir\\|arc\\)\\/\\=$", "", "")')
+    call map(dirs, 'substitute(v:val, "\\.\\%(dir\\|arc\\).\\=$", "", "")')
 
     " remove duplicates
     let dirs = s:Uniquify(dirs)
@@ -267,7 +267,7 @@ function! s:GetModel()
     let max = 4
     let depth = ':p:h'
     let base = expand('%'.depth)
-    while match(base, '\.\%(arc\)\|\%(dir\)$') != -1
+    while match(base, '\.\%(arc\|dir\)$') != -1
         let max -= 1
         let depth .= ':h'
         let base = expand('%'.depth)
@@ -276,7 +276,9 @@ function! s:GetModel()
         " step one directory backwards if inside a 'multiple version'
         " directory like 'model05, model06, model07 ...'
         if s:CheckMultipleVersions(base)
-            let base = expand('%'.depth[:-2])
+            let base = substitute(expand('%'.depth[:-2]),
+                        \ '\%(arc\|dir\).\=$', '', '')
+            let base = base . 'arc,' . base . 'dir'
             break
         endif
     endwhile
