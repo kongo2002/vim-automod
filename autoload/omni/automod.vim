@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Thu 27 May 2010 09:37:57 PM CEST
+" Last Change:  Wed 02 Jun 2010 08:20:07 PM CEST
 
 if v:version < 700
     echohl WarningMsg
@@ -158,6 +158,7 @@ function! omni#automod#GetType()
             return 'afopqrv'
         elseif type =~ 'while'
             return 'afopqrv'
+        endif
     endif
 
     return ''
