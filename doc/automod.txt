@@ -1,0 +1,164 @@
+*automod.vim*       Filetype plugin for working with AutoMod source files
+
+Author: Gregor Uhlenheuer <kongo2002@googlemail.com>   |automod-plugin-author|
+
+|automod-introduction|          Introduction and Feature Summary
+|automod-installation|          Installation and Usage
+|automod-configure-vim|             Configuring Vim
+|automod-install-plugin|            Installing and Using the Plugin
+|automod-omni-completion|       Omni Completion
+|automod-completion-mechanism|      Completion Mechanism
+|automod-configuration|         Plugin Configuration
+|automod-about|                 About automod.vim
+|automod-license|                   License
+
+{Vi does not have any of this}
+
+INTRODUCTION                                  *automod-introduction* *automod*
+
+This plugin is meant to ease the use of vim with AutoMod source code files.
+It includes automatic filetype detection, syntax-highlighting, indentation and
+omni-completion.
+
+1. Automatically detects AutoMod source code files based on the file
+   extensions .m and *.m~ and applies settings to those buffers (and those
+   buffers only).
+
+2. Proper syntax highlighting is provided. All AutoMod syntax keywords are
+   defined in matching highlighting groups resulting in easy-to-read source
+   code files.
+
+3. Various AutoMod specific indentation rules guarantee good indented source
+   code where the all common formatting styles are supported.
+
+4. A sophisticated |omni-completion| mechanism allows to complete variables,
+   attributes, processes, functions as well as movement system stations and
+   control points.  Moreover the completion is able to detect submodels and
+   their appropriate members.
+
+INSTALLATION AND USAGE                                  *automod-installation*
+
+If you are familiar with Vim and have the latest version installed, you may
+skip to |automod-install-plugin| below.
+
+Configuring Vim ~
+                                                       *automod-configure-vim*
+If you are new to Vim and its configuration system, you need to create a
+|vimrc|.  For Windows users this file goes in $HOME\_vimrc (try :e ~\_vimrc if
+you don't know where this location is).  On other platforms, use ~/.vimrc.  A
+minimal example is shown below.
+>
+    set nocompatible
+    syntax on
+    filetype plugin indent on
+>
+See |vimfiles| to get more information on the vim runtimepath system.
+
+Installing and Using the Plugin ~
+                                                      *automod-install-plugin*
+If you have the zip archive file, extract it to vimfiles (Windows) or ~/.vimrc
+(Unix and others).  Now you should have the following files: >
+    autoload/omni/automod.vim
+    doc/automod.txt
+    ftdetect/automod.vim
+    ftplugin/automod.vim
+    indent/automod.vim
+    syntax/automod.vim
+In order to activate the automod specific documentation see |add-local-help|
+for instructions.  In a nutshell you have to do something like: >
+    :helptags ~\vimfiles\doc        (Windows)
+    :helptags ~/.vim/doc            (Unix and others)
+
+Usually whenever you edit an AutoMod source file the filetype should be
+automatically recognized as "automod".  You can check this by running: >
+    :set ft?
+If this does not show "automod", the filetype detection is probably being
+overwritten by system-wide settings.  In order to force Vim to set *.m files
+to "automod" then you should set this in your |vimrc|: >
+    let g:filetype_m = 'automod'
+
+OMNI COMPLETION                                      *automod-omni-completion*
+
+The AutoMod specific |omni-completion| mechanism is built to ease the
+programming process and support the source code writer in suggesting
+appropriate variables, process and attribute names.  Usually the completion
+should simply work out-of-the-box when invoked from within the AutoMod
+environment or from the filesystem tree (i.e. Windows Explorer).
+
+AutoMod Completion Mechanism ~
+                                                *automod-completion-mechanism*
+The completion works by populating an internal model specific structure of
+defined entities.  This structure is filled on opening the source file for the
+first time.  In order to gather all defined entities the directory above and
+below the currently edited file is searched for ASY files.  All non-static
+systems are then searched and analyzed for entities.
+
+Although the file and directory analysis is pretty sophisticated there are
+some possiblities where the determination of the main model directory may
+fail.  Ideally the directory structure should be properly organized i.e. by
+using a VCS to prevent wrong results. Since it is very difficult till nearly
+impossible to distinguish between a main model system and a submodel system
+the directory is reversely searched for a directory containing no DIR or ARC
+folder.  An examplary directory search tree could look like this:
+>
+    simulation_models
+        `- sim_model01          <-- main model directory
+            `- generic_mod.arc
+            `- generic_mod.dir
+                `- 10_init.m
+                `- 30_route.m   <-- edited file
+        `- other_model99
+>
+A parent directory with multiple DIR and ARC directories of different
+simulation models will cause the directory search to fail:
+>
+    simulation_models           <-- main model directory ( WRONG! )
+        `- static_mod.arc
+        `- static_mod.dir
+            `- logic.m          <-- edited file
+        `- generic_mod.arc
+        `- generic_mod.dir
+>
+PLUGIN CONFIGURATION                                   *automod-configuration*
+
+There are a few configuration variables that allow the user to customize,
+debug or disable the AutoMod omni completion.  Since the omni completion
+mechanism used in the plugin needs to partially search the filesystem tree and
+eventually parse multiple .ARC files the user may want to temporarily disable
+the plugin to reduce the file opening process.
+
+                                            *g:automod_omni_max_systems*  >
+    let g:automod_omni_max_systems = 100
+Set this to limit the maximum system files to parse (default: 20).
+
+                                            *g:autmod_omni_debug*  >
+    let g:automod_omni_debug = 1
+Enable debug messages for the omni completion functions.
+
+                                            *g:automod_omni_disable*  >
+    let g:automod_omni_disable = 1
+Prevent the AutoMod omni completion from being invoked at all.
+
+ABOUT                                  *automod-about* *automod-plugin-author*
+
+This filetype plugin was written by Gregor Uhlenheuer.  Email him at
+<kongo2002@googlemail.com>.  He can also be found on freenode's IRC network,
+hanging out in #vim as kongo.
+
+The official homepage is
+    http://github.com/kongo2002/vim-automod
+
+Download the archived source from github:
+    http://github.com/kongo2002/vim-automod/archives/master
+
+Get the latest development version via Git:
+    git clone git://github.com/kongo2002/vim-automod.git
+
+Feedback is highly desired on this plugin.  Please send all comments,
+complaints and compliments to the author.  No bug is too small to report.
+
+                                                             *automod-license*
+This plugin is distributable under the same terms as Vim itself. See
+|license|.  No warranties, expressed or implied.
+
+ vim:tw=78:ts=8:ft=help:norl:
