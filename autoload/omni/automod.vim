@@ -1,13 +1,21 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Thu 22 Jul 2010 07:26:04 PM CEST
+" Last Change:  Thu 22 Jul 2010 07:33:05 PM CEST
 
-if v:version < 700
+if v:version < 700 || &cp
     echohl WarningMsg
     echomsg "omni#automod.vim: Please install vim 7.0 or higher"
     echohl None
     finish
 endif
+
+if exists('g:autoloaded_automod')
+    finish
+endif
+let g:autoloaded_automod = 1
+
+let s:cpo_save = &cpo
+set cpo&vim
 
 function! omni#automod#Init()
     if !exists('g:automod_omni_disable') || g:automod_omni_disable == 0
@@ -400,3 +408,5 @@ function! s:Warn(msg)
     echom 'omni#automod.vim: ' . a:msg
     echohl None
 endfunction
+
+let &cpo = s:cpo_save
