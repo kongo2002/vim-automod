@@ -2,15 +2,15 @@
 
 Author: Gregor Uhlenheuer <kongo2002@googlemail.com>   |automod-plugin-author|
 
-|automod-introduction|          Introduction and Feature Summary
-|automod-installation|          Installation and Usage
-|automod-configure-vim|             Configuring Vim
-|automod-install-plugin|            Installing and Using the Plugin
-|automod-omni-completion|       Omni Completion
-|automod-completion-mechanism|      Completion Mechanism
-|automod-configuration|         Plugin Configuration
-|automod-about|                 About automod.vim
-|automod-license|                   License
+|automod-introduction|                 Introduction and Feature Summary
+|automod-installation|                 Installation and Usage
+|automod-configure-vim|                    Configuring Vim
+|automod-install-plugin|                   Installing and Using the Plugin
+|automod-omni-completion|              Omni Completion
+|automod-completion-mechanism|             Completion Mechanism
+|automod-configuration|                Plugin Configuration
+|automod-about|                        About automod.vim
+|automod-license|                          License
 
 {Vi does not have any of this}
 
