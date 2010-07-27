@@ -29,7 +29,7 @@ omni-completion.
    code files.
 
 3. Various AutoMod specific indentation rules guarantee good indented source
-   code where the all common formatting styles are supported.
+   code where all common formatting styles are supported.
 
 4. A sophisticated |omni-completion| mechanism allows to complete variables,
    attributes, processes, functions as well as movement system stations and
