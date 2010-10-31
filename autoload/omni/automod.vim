@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Thu 22 Jul 2010 07:33:05 PM CEST
+" Last Change:  Sun 31 Oct 2010 12:02:18 PM CET
 
 if v:version < 700 || &cp
     echohl WarningMsg
@@ -55,6 +55,15 @@ function! omni#automod#Settings()
 
 endfunction
 
+function! s:FilterLine(line)
+    for ent in keys(s:entity_types)
+        if a:line =~# '^'.ent
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+
 function! omni#automod#Cache()
 
     let asys = s:GetModel()
@@ -68,7 +77,7 @@ function! omni#automod#Cache()
     for fp in asys
         let entities = []
         let name = matchstr(fp, '\w\+\ze\~\=.asy$')
-        let lines = readfile(fp)
+        let lines = filter(readfile(fp), 's:FilterLine(v:val)')
         let mod = getftime(fp)
 
         if has_key(s:cache, name) && s:cache[name].mod == mod
