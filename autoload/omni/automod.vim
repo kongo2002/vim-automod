@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Sun 31 Oct 2010 12:02:18 PM CET
+" Last Change:  Sun 31 Oct 2010 12:16:09 PM CET
 
 if v:version < 700 || &cp
     echohl WarningMsg
@@ -142,12 +142,9 @@ function! omni#automod#GetScope()
     let scope = s:GetPreceding()
 
     if match(scope, '[\.:]') != -1
-        let scope = matchstr(scope, '\w\+\ze[\.:]')
-    else
-        return ''
+        return matchstr(scope, '\w\+\ze[\.:]')
     endif
-
-    return scope
+    return ''
 endfunction
 
 function! omni#automod#GetType()
