@@ -1,6 +1,6 @@
 " Description:  omni completion for AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Sun 31 Oct 2010 12:16:09 PM CET
+" Last Change:  Sun 31 Oct 2010 12:27:22 PM CET
 
 if v:version < 700 || &cp
     echohl WarningMsg
@@ -217,17 +217,15 @@ function! omni#automod#Complete(base, type, ...)
 
         " filter types if given
         if a:type != ''
-            let i = 0
-            while i < strlen(a:type)
+            for t in split(a:type, '\zs')
                 for entity in s:cache[system].entities
                     if has_key(entity, 'kind')
-                        if entity.kind == a:type[i]
+                        if entity.kind == t
                             call add(words, entity)
                         endif
                     endif
                 endfor
-                let i += 1
-            endwhile
+            endfor
         else
             let words = copy(s:cache[system].entities)
         endif
