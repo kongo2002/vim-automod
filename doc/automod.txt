@@ -58,23 +58,29 @@ Installing and Using the Plugin ~
                                                       *automod-install-plugin*
 If you have the zip archive file, extract it to vimfiles (Windows) or ~/.vimrc
 (Unix and others).  Now you should have the following files: >
+
     autoload/omni/automod.vim
     doc/automod.txt
     ftdetect/automod.vim
     ftplugin/automod.vim
     indent/automod.vim
     syntax/automod.vim
+
 In order to activate the automod specific documentation see |add-local-help|
 for instructions.  In a nutshell you have to do something like: >
+
     :helptags ~\vimfiles\doc        (Windows)
     :helptags ~/.vim/doc            (Unix and others)
 
 Usually whenever you edit an AutoMod source file the filetype should be
 automatically recognized as "automod".  You can check this by running: >
+
     :set ft?
+
 If this does not show "automod", the filetype detection is probably being
 overwritten by system-wide settings.  In order to force Vim to set *.m files
 to "automod" then you should set this in your |vimrc|: >
+
     let g:filetype_m = 'automod'
 
 OMNI COMPLETION                                      *automod-omni-completion*
