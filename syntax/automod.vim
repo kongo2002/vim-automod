@@ -1,7 +1,7 @@
 " Vim syntax file
 " Language:     AutoMod
 " Maintainer:   Gregor Uhlenheuer
-" Last Change:  Sun 21 Mar 2010 07:17:23 PM CET
+" Last Change:  Sat 29 Jan 2011 01:10:15 AM CET
 
 if version < 600
     syntax clear
@@ -24,7 +24,7 @@ syn keyword mConditional if then else
 
 syn keyword mSystem function procedure return model modelsys pickup
 syn keyword mSystem arriving leaving initialization passing retrieving
-syn keyword mSystem blocked cleared start finish done
+syn keyword mSystem blocked cleared start finish done ready
 
 " todo statements
 syn keyword mTodo TODO FIXME XXX contained
